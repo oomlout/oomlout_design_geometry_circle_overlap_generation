@@ -1,7 +1,7 @@
 import os
 import copy
 from PIL import Image, ImageDraw, ImageFont
-
+import time
 
 def main(**kwargs):
     pass
@@ -11,11 +11,12 @@ def main(**kwargs):
     colors = kwargs.get('colors', [])
     circles = kwargs.get('circles', [])
     file_output = kwargs.get('file_output', 'output/working.png')
-    #create output directory
-    if not os.path.exists('output'):
-        os.makedirs('output')
+    #create output directory for full file_output
+    output_dir = os.path.dirname(file_output)
+    if not os.path.exists(output_dir):
+        os.makedirs(output_dir)
 
-
+    start_time = time.time()
     print(f"making: {file_output}")
 
     #make image
@@ -24,19 +25,39 @@ def main(**kwargs):
 
 
     #calculate how many circles each pixel is inside
-    for x in range(width):
-        for y in range(height):
-            count = 0
-            for circle in circles:
-                cx, cy, r = circle
-                if (x - cx) ** 2 + (y - cy) ** 2 <= r ** 2:
-                    count += 1
-            #set color based on count
-            if count > 0:
-                #print(count)
-                color = colors[count % len(colors)]
-                draw.point((x, y), fill=tuple(color))
+    old = False
+    if old:
+        for x in range(width):
+            for y in range(height):
+                count = 0
+                for circle in circles:
+                    cx, cy, r = circle
+                    if (x - cx) ** 2 + (y - cy) ** 2 <= r ** 2:
+                        count += 1
+                #set color based on count
+                if count > 0:
+                    #print(count)
+                    color = colors[count % len(colors)]
+                    draw.point((x, y), fill=tuple(color))
+    else:
+        import numpy as np
 
+        # Create a grid of coordinates
+        x_coords, y_coords = np.meshgrid(range(width), range(height))
+        count_matrix = np.zeros((height, width), dtype=int)
+
+        # Calculate how many circles each pixel is inside
+        for cx, cy, r in circles:
+            mask = (x_coords - cx) ** 2 + (y_coords - cy) ** 2 <= r ** 2
+            count_matrix += mask
+
+        # Set color based on count
+        for count in np.unique(count_matrix):
+            if count > 0:
+                color = colors[count % len(colors)]
+                mask = count_matrix == count
+                for y, x in zip(*np.where(mask)):
+                    draw.point((x, y), fill=tuple(color))
     #draw circles
     if True:
         for circle in circles:
@@ -51,7 +72,10 @@ def main(**kwargs):
     if True:
         image.save(file_output)
     
-    
+    #time in hour:minute
+    time_taken_string = time.strftime("%H:%M:%S", time.gmtime(time.time() - start_time))
+
+    print(f"Time taken: {time_taken_string}")
 
     
 
@@ -59,40 +83,54 @@ def main(**kwargs):
 if __name__ == '__main__':
 
     runs = 100
-
+    circles = []
     for i in range(runs):
         kwargs = {}
-        file_output = 'output/working_' + str(i) + '.png'
+        width = 5000
+        kwargs['width'] = width    
+        height = 5000
+        kwargs['height'] = height
+        
+        file_output = f"output/{width}/working_{i}.png"
         kwargs['file_output'] = file_output
         
 
 
 
         
-        width = 1000
-        kwargs['width'] = width    
-        height = 1000
-        kwargs['height'] = height
         #circles
-        if True:
-            circles = []
+        border_width = 10
+        kwargs['border_width'] = border_width
+        
+        if True:            
             #circles.append((125, 125, 100))
             #circles.append((250, 125, 100))
-            number_of_circles = i
-            sizes = [25,50,100,200,400]
+            #number_of_circles = i
+            sizes = [width*0.05,width*0.1, width*0.2, width*0.4]#, width*0.8]
+            #turn all sizes into int
+            sizes = [int(x) for x in sizes]
             multiple = 25
             import random
-            for i in range(number_of_circles):
+            #for i in range(number_of_circles):
+
+            if True:
                 #each circle is fully inside the canvas
                 #each circle is a multiple of multiple ie 25, 50, 100, 200
                 #each circle is on a grid of multiple
                 r = random.choice(sizes)
-                x = random.randint(r, width - r)
-                #round to multiple
-                x = int(x / multiple) * multiple
-                y = random.randint(r, height - r)
-                #round to multiple
-                y = int(y / multiple) * multiple
+                success = False
+                while not success:
+                    try:
+                        x = random.randint(r, width - r)
+                        #round to multiple
+                        x = int(x / multiple) * multiple
+                        y = random.randint(r, height - r)
+                        #round to multiple
+                        y = int(y / multiple) * multiple
+                        success = True
+                    except:
+                        print(f"bad guess trying again")
+                
                 circles.append((x, y, r))
             kwargs['circles'] = circles
         #colors
