@@ -349,7 +349,7 @@ def get_colours(**kwargs):
             #trendy
             if True:
                 #dark
-                if False:
+                if True:
                     colors = [
                                 [153, 27, 27],    # Brick Red
                                 [179, 74, 21],    # Burnt Orange
@@ -418,9 +418,9 @@ if __name__ == '__main__':
     #runs = 1
 
     kwargs = {}
-    width = 5000
+    width = 2000
     kwargs['width'] = width    
-    height = 5000
+    height = 2000
     kwargs['height'] = height
     #circles
     border_width = int(width / 1000)
@@ -435,22 +435,22 @@ if __name__ == '__main__':
         #data = "j"
         #data = "o"
         #data = "y"
-        #data = "joy"
-        data = "lawrence"
+        data = "joy"
+        #data = "lawrence"
         kwargs['data'] = data
         circles = get_circles_data(**kwargs)
         data_no_spaces = data.replace(" ", "_")
-        folder_output = f"output/{width}_{data_no_spaces}_data/"
+        folder_output = f"output/{width}_{data_no_spaces}_data"
 
     if mode == "random":
         for i in range(runs):
             circles.append(get_circle_random(**kwargs))
-        folder_output = f"output/{width}_random/"
+        folder_output = f"output/{width}_random"
 
     
     
     
-    animate = False
+    animate = True
     if animate:
         start = 0
     else:
@@ -481,9 +481,9 @@ if __name__ == '__main__':
         
         #colors
         if True:
-            color_style = "lawrence"
+            #color_style = "lawrence"
             #color_style = "none"
-            #color_style = "rainbow"
+            color_style = "rainbow"
             kwargs['color_style'] = color_style
             colors = get_colours(**kwargs)            
             kwargs['colors'] = colors
@@ -504,5 +504,5 @@ if __name__ == '__main__':
 
     #make animation
     kwargs["folder"] = folder_output
-    kwargs["duration"] = 100
-    #make_animation(**kwargs)
+    kwargs["duration"] = 1000
+    make_animation(**kwargs)
