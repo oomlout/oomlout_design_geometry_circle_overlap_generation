@@ -8,20 +8,60 @@ alphabet_brail = {}
 alphabet_brail['a'] = [[True, False],
                        [False, False],
                        [False, False]]
+#c
+alphabet_brail['c'] = [[True, True],
+                       [False, False],
+                       [False, False]]
+#e
+alphabet_brail['e'] = [[True, False],
+                       [False, True],
+                       [False, False]]
 alphabet_brail['j'] = [[False, True],
                           [True, True],                          
                           [False, False]]
+#l
+alphabet_brail['l'] = [[True, False],
+                       [True, False],
+                       [True, False]]
+#n
+alphabet_brail['n'] = [[True, True],
+                          [False, True],
+                          [True, False]]
 alphabet_brail["o"] = [[True, False],
                        [False, True],
                        [True, False]]
+#r
+alphabet_brail['r'] = [[True, False],
+                          [True, True],
+                          [True, False]]
+#w
+alphabet_brail['w'] = [[False, True],
+                       [True, True],
+                       [False, True]]
 alphabet_brail['y'] = [[True, True],
                         [False, True],
                         [True, True]]
 
+
                        
 alphabet_morse = {}
+#a
+alphabet_morse['a'] = ["dot","dash"]
+#c
+alphabet_morse['c'] = ["dash","dot","dash","dot"]
+#e
+alphabet_morse['e'] = ["dot"]
 alphabet_morse['j'] = ["dot","dash","dash","dash"]                      
+#l
+alphabet_morse['l'] = ["dot","dash","dot","dot"]
+#n
+alphabet_morse['n'] = ["dash","dot"]
 alphabet_morse['o'] = ["dash","dash","dash"]
+#r
+alphabet_morse['r'] = ["dot","dash","dot"]
+#w
+
+alphabet_morse['w'] = ["dot","dash","dash"]
 alphabet_morse['y'] = ["dash","dot","dash","dash"]
 
 def main(**kwargs):
@@ -378,9 +418,9 @@ if __name__ == '__main__':
     #runs = 1
 
     kwargs = {}
-    width = 2000
+    width = 5000
     kwargs['width'] = width    
-    height = 2000
+    height = 5000
     kwargs['height'] = height
     #circles
     border_width = int(width / 1000)
@@ -395,7 +435,8 @@ if __name__ == '__main__':
         #data = "j"
         #data = "o"
         #data = "y"
-        data = "joy"
+        #data = "joy"
+        data = "lawrence"
         kwargs['data'] = data
         circles = get_circles_data(**kwargs)
         data_no_spaces = data.replace(" ", "_")
@@ -464,4 +505,4 @@ if __name__ == '__main__':
     #make animation
     kwargs["folder"] = folder_output
     kwargs["duration"] = 100
-    make_animation(**kwargs)
+    #make_animation(**kwargs)
