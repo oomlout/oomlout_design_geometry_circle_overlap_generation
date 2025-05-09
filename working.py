@@ -2,7 +2,8 @@ import os
 import copy
 from PIL import Image, ImageDraw, ImageFont
 import time
-
+import svgwrite
+import numpy as np
 
 alphabet_brail = {}
 alphabet_brail['a'] = [[True, False],
@@ -66,6 +67,7 @@ alphabet_morse['y'] = ["dash","dot","dash","dash"]
 
 def main(**kwargs):
     pass
+    draw_levels = kwargs.get('draw_levels', True)
     data = kwargs.get('data', "")
     width = kwargs.get('width', 0)
     height = kwargs.get('height', 0)
@@ -85,66 +87,101 @@ def main(**kwargs):
 
     overwrite = kwargs.get('overwrite', True)
 
-    #make image
-    image = Image.new('RGB', (width, height), color_background_tuple)
-    draw = ImageDraw.Draw(image)
+    if True:
+        #make image
+        image = Image.new('RGB', (width, height), color_background_tuple)
+        draw = ImageDraw.Draw(image)
 
 
-    #only make if file_output doesnt exist or overwrite is True
-    if not os.path.exists(file_output) or overwrite:
-        
-        
+        #only make if file_output doesnt exist or overwrite is True
+        if not os.path.exists(file_output) or overwrite:
+            
+            
 
-        #calculate how many circles each pixel is inside
-        old = False
-        if old:
-            for x in range(width):
-                for y in range(height):
-                    count = 0
-                    for circle in circles:
-                        cx, cy, r = circle
-                        if (x - cx) ** 2 + (y - cy) ** 2 <= r ** 2:
-                            count += 1
-                    #set color based on count
+            #calculate how many circles each pixel is inside
+            old = False
+            if old:
+                for x in range(width):
+                    for y in range(height):
+                        count = 0
+                        for circle in circles:
+                            cx, cy, r = circle
+                            if (x - cx) ** 2 + (y - cy) ** 2 <= r ** 2:
+                                count += 1
+                        #set color based on count
+                        if count > 0:
+                            #print(count)
+                            color = colors[count % len(colors)]
+                            draw.point((x, y), fill=tuple(color))
+            else:
+                import numpy as np
+
+                # Create a grid of coordinates
+                x_coords, y_coords = np.meshgrid(range(width), range(height))
+                count_matrix = np.zeros((height, width), dtype=int)
+
+                # Calculate how many circles each pixel is inside
+                for cx, cy, r in circles:
+                    mask = (x_coords - cx) ** 2 + (y_coords - cy) ** 2 <= r ** 2
+                    count_matrix += mask
+
+                # Set color based on count
+                for count in np.unique(count_matrix):
                     if count > 0:
-                        #print(count)
                         color = colors[count % len(colors)]
-                        draw.point((x, y), fill=tuple(color))
-        else:
-            import numpy as np
+                        mask = count_matrix == count
+                        for y, x in zip(*np.where(mask)):
+                            draw.point((x, y), fill=tuple(color))
+                    
+                if draw_levels:
+                    #get the maximum of the array
+                    levels_np = np.max(count_matrix)
+                    levels_int = int(levels_np) + 1
+                    #make a folder with f"folder_{image_name}"
+                    #just name
+                    file_output_just_name = os.path.basename(file_output)
+                    #remove extension
+                    file_output_just_name = os.path.splitext(file_output_just_name)[0]
+                    #folder is output directory+ folder_imagename
+                    folder = os.path.join(output_dir, f"{file_output_just_name}")
+                    for l in range(levels_int):
+                        print(f"making level {l} image")
+                        filename_image = f"{folder}/level_{l}.png"
+                        if not os.path.exists(folder):
+                            os.makedirs(folder)
+                        if not os.path.exists(filename_image) or overwrite:
+                            color = (0,0,0)
+                            #make image
+                            image = Image.new('RGB', (width, height), color_background_tuple)
+                            draw = ImageDraw.Draw(image)
+                            #set color if spot is within l or more circles
+                            mask = count_matrix >= l
 
-            # Create a grid of coordinates
-            x_coords, y_coords = np.meshgrid(range(width), range(height))
-            count_matrix = np.zeros((height, width), dtype=int)
+                            for y, x in zip(*np.where(mask)):
+                                draw.point((x, y), fill=tuple(color))
+                            #save image
+                            image.save(filename_image)
+                            #trace and save as svg
+                            svg_output_path = f"{folder}/level_{l}.svg"
+                            #trace_and_save_as_svg(filename_image, svg_output_path)                    
+                    
 
-            # Calculate how many circles each pixel is inside
-            for cx, cy, r in circles:
-                mask = (x_coords - cx) ** 2 + (y_coords - cy) ** 2 <= r ** 2
-                count_matrix += mask
-
-            # Set color based on count
-            for count in np.unique(count_matrix):
-                if count > 0:
-                    color = colors[count % len(colors)]
-                    mask = count_matrix == count
-                    for y, x in zip(*np.where(mask)):
-                        draw.point((x, y), fill=tuple(color))
-        #draw circles
-        if True:
-            for circle in circles:
-                x, y, r = circle
-                #transparent circle
-                draw.ellipse((x - r, y - r, x + r, y + r), outline=(0, 0, 0), width=border_width)
-                
+            #draw circles
+            if True:
+                for circle in circles:
+                    x, y, r = circle
+                    #transparent circle
+                    draw.ellipse((x - r, y - r, x + r, y + r), outline=(0, 0, 0), width=border_width)
+                    
 
 
 
-        # save image
-        if True:
-            image.save(file_output)
-        
-        #time in hour:minute
-        time_taken_string = time.strftime("%H:%M:%S", time.gmtime(time.time() - start_time))
+            # save image
+            if True:
+                image.save(file_output)
+            
+            #time in hour:minute
+            time_taken_string = time.strftime("%H:%M:%S", time.gmtime(time.time() - start_time))
 
         print(f"Time taken: {time_taken_string}")
 
@@ -154,6 +191,25 @@ def main(**kwargs):
 
 
 Image.MAX_IMAGE_PIXELS = None  # Set to None to disable the warning entirely
+
+from PIL import Image
+import potrace
+
+def trace_and_save_as_svg(image_path, svg_output_path):
+    # Load the black-and-white image
+    image = Image.open(image_path).convert("1")  # Convert to 1-bit bitmap (black and white)
+    bitmap = potrace.Bitmap(image)
+
+    # Trace the bitmap
+    path = bitmap.trace()
+
+    # Create an SVG file and write the traced paths
+    with open(svg_output_path, "w") as svg_file:
+        svg_file.write('<svg xmlns="http://www.w3.org/2000/svg">\n')
+        for curve in path:
+            svg_file.write(f'<path d="{curve.to_svg()}" fill="black" />\n')
+        svg_file.write('</svg>\n')
+
 
 def make_animation(**kwargs):
     #make a gif scaled to 1000x1000 and save as gif and avi
@@ -418,15 +474,15 @@ if __name__ == '__main__':
     #runs = 1
 
     kwargs = {}
-    width = 2000
+    width = 250
     kwargs['width'] = width    
-    height = 2000
+    height = 250
     kwargs['height'] = height
     #circles
     border_width = int(width / 1000)
     kwargs['border_width'] = border_width
-    color_background =  [12,127,154]       
-    #color_background =  [255,255,255]       
+    #color_background =  [12,127,154]       
+    color_background =  [255,255,255]       
     kwargs['color_background'] = color_background
 
     circles = []
@@ -450,7 +506,7 @@ if __name__ == '__main__':
     
     
     
-    animate = True
+    animate = False
     if animate:
         start = 0
     else:
@@ -505,4 +561,4 @@ if __name__ == '__main__':
     #make animation
     kwargs["folder"] = folder_output
     kwargs["duration"] = 1000
-    make_animation(**kwargs)
+    #make_animation(**kwargs)
