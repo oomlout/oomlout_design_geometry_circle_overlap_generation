@@ -1,8 +1,6 @@
 import os
-import copy
 from PIL import Image, ImageDraw, ImageFont
 import time
-import svgwrite
 import numpy as np
 
 alphabet_brail = {}
@@ -193,9 +191,10 @@ def main(**kwargs):
 Image.MAX_IMAGE_PIXELS = None  # Set to None to disable the warning entirely
 
 from PIL import Image
-import potrace
+
 
 def trace_and_save_as_svg(image_path, svg_output_path):
+    import potrace
     # Load the black-and-white image
     image = Image.open(image_path).convert("1")  # Convert to 1-bit bitmap (black and white)
     bitmap = potrace.Bitmap(image)
