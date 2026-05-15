@@ -1,0 +1,12 @@
+letter_grid:
+  width: 2
+  height: 3
+
+diameter: 52
+spacing: 100
+spacing_letter: 240
+start_shift_x: 500
+start_shift_y: 500
+initial_dash_multiplier: 1.6
+next_dot_multiplier: 2.0
+next_dash_multiplier: 2.0

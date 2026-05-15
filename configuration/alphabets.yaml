@@ -1,0 +1,53 @@
+braille:
+  a:
+    - [true, false]
+    - [false, false]
+    - [false, false]
+  c:
+    - [true, true]
+    - [false, false]
+    - [false, false]
+  e:
+    - [true, false]
+    - [false, true]
+    - [false, false]
+  j:
+    - [false, true]
+    - [true, true]
+    - [false, false]
+  l:
+    - [true, false]
+    - [true, false]
+    - [true, false]
+  n:
+    - [true, true]
+    - [false, true]
+    - [true, false]
+  o:
+    - [true, false]
+    - [false, true]
+    - [true, false]
+  r:
+    - [true, false]
+    - [true, true]
+    - [true, false]
+  w:
+    - [false, true]
+    - [true, true]
+    - [false, true]
+  y:
+    - [true, true]
+    - [false, true]
+    - [true, true]
+
+morse:
+  a: [dot, dash]
+  c: [dash, dot, dash, dot]
+  e: [dot]
+  j: [dot, dash, dash, dash]
+  l: [dot, dash, dot, dot]
+  n: [dash, dot]
+  o: [dash, dash, dash]
+  r: [dot, dash, dot]
+  w: [dot, dash, dash]
+  y: [dash, dot, dash, dash]

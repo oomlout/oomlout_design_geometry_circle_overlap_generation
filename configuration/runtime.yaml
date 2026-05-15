@@ -1,0 +1,33 @@
+input:
+  text: joy
+
+data_files:
+  encoding: alphabets.yaml
+  geometry: geometry.yaml
+  palettes: palettes.yaml
+
+canvas:
+  width: 1400
+  height: 1000
+  border_width: 2
+  background: [255, 255, 255]
+
+palette:
+  name: rainbow_dark
+
+render:
+  draw_circle_outlines: true
+
+outputs:
+  directory: ../output/runtime_joy
+  final_filename: working.png
+  save_metadata: true
+  sequence:
+    enabled: true
+    prefix: working_
+  levels:
+    enabled: true
+  animation:
+    enabled: true
+    filename: working.gif
+    duration_ms: 250
