@@ -14,9 +14,21 @@ if exist ".venv\Scripts\python.exe" (
     )
 )
 
-%PYTHON% main.py
+set /p WORD=Word to generate: 
+if "%WORD%"=="" goto :error
+
+echo.
+echo Generating 2D artwork and scene data...
+%PYTHON% main.py --word "%WORD%"
 if errorlevel 1 goto :error
 
+echo.
+echo Generating 3D previews and orbit renders...
+%PYTHON% preview_3d.py --word "%WORD%" --all-materials
+if errorlevel 1 goto :error
+
+echo.
+echo Refreshing gallery navigation...
 %PYTHON% generate_navigation.py
 if errorlevel 1 goto :error
 

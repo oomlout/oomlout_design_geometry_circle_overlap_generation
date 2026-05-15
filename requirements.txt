@@ -2,3 +2,5 @@ numpy
 Pillow
 PyYAML
 pytest
+pyvista
+imageio

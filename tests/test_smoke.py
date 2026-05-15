@@ -1,5 +1,6 @@
 from pathlib import Path
 
+import json
 import yaml
 import pytest
 
@@ -47,9 +48,12 @@ outputs:
 
     result = run_from_config(config_path)
 
+    assert result.output_directory.name == "a"
     assert result.final_image.exists()
     assert result.animation is not None
     assert result.animation.exists()
+    assert result.scene_3d is not None
+    assert result.scene_3d.exists()
     assert (result.output_directory / "frame_0.png").exists()
     assert (result.output_directory / "frame_1.png").exists()
     assert (result.output_directory / "final" / "level_1.png").exists()
@@ -58,6 +62,9 @@ outputs:
 
     circles = yaml.safe_load((result.output_directory / "circles.yaml").read_text(encoding="utf-8"))
     assert len(circles) == 2
+    scene = json.loads((result.output_directory / "scene_3d.json").read_text(encoding="utf-8"))
+    assert scene["scene_type"] == "layered_discs"
+    assert len(scene["discs"]) == 2
 
 
 def test_run_from_config_accepts_input_override(tmp_path: Path) -> None:
@@ -98,6 +105,7 @@ outputs:
 
     result = run_from_config(config_path, input_text_override="a")
 
+    assert result.output_directory.name == "a"
     circles = yaml.safe_load((result.output_directory / "circles.yaml").read_text(encoding="utf-8"))
     assert len(circles) == 2
 
@@ -134,6 +142,7 @@ def test_get_preview_output_prefers_animation(tmp_path: Path) -> None:
     circles=[],
     final_image=final_image,
     animation=animation,
+    scene_3d=None,
   )
   assert get_preview_output(preview_result) == animation
 
@@ -143,5 +152,6 @@ def test_get_preview_output_prefers_animation(tmp_path: Path) -> None:
     circles=[],
     final_image=final_image,
     animation=None,
+    scene_3d=None,
   )
   assert get_preview_output(still_result) == final_image

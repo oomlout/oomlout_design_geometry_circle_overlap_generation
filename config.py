@@ -2,6 +2,7 @@ from __future__ import annotations
 
 from dataclasses import dataclass
 from pathlib import Path
+import re
 
 import yaml
 
@@ -78,6 +79,11 @@ def _resolve_relative_path(base_path: Path, configured_path: str) -> Path:
     if not candidate.is_absolute():
         candidate = (base_path.parent / candidate).resolve()
     return candidate
+
+
+def _slugify_input_text(input_text: str) -> str:
+    slug = re.sub(r"[^a-z0-9]+", "_", input_text.lower()).strip("_")
+    return slug or "generated"
 
 
 def _validate_rgb_triplet(name: str, value: list[int] | tuple[int, int, int]) -> tuple[int, int, int]:
@@ -206,8 +212,10 @@ def load_app_config(
 
     outputs_data = root_data.get("outputs", {})
     if output_directory is None:
-        output_directory = outputs_data.get("directory", "output")
-    output_path = _resolve_relative_path(config_path, str(output_directory))
+        output_base = _resolve_relative_path(config_path, str(outputs_data.get("directory", "output")))
+        output_path = output_base / _slugify_input_text(input_text)
+    else:
+        output_path = _resolve_relative_path(config_path, str(output_directory))
     output_config = OutputConfig(
         directory=output_path,
         final_filename=str(outputs_data.get("final_filename", "working.png")),

@@ -19,7 +19,7 @@ render:
   draw_circle_outlines: true
 
 outputs:
-  directory: ../output/runtime_joy
+  directory: ../output
   final_filename: working.png
   save_metadata: true
   sequence:

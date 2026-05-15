@@ -11,11 +11,11 @@ The current runtime is config-driven, prompts for the word on launch, renders a 
 
 ### Animated Output
 
-![Animated joy output](output/runtime_joy/working.gif)
+![Animated joy output](output/joy/working.gif)
 
 ### Final Render
 
-![Final joy render](output/runtime_joy/working.png)
+![Final joy render](output/joy/working.png)
 
 ## How It Works
 
@@ -48,6 +48,7 @@ main.py
 config.py
 generator.py
 rendering.py
+preview_3d.py
 generate_navigation.py
 output/
 ```
@@ -70,6 +71,16 @@ start.bat
 ```bash
 ./setup.sh
 ./start.sh
+```
+
+For the first 3D viewer pass:
+
+```powershell
+start_3d.bat
+```
+
+```bash
+./start_3d.sh
 ```
 
 You will be prompted like this:
@@ -102,7 +113,7 @@ The repo includes simple cross-platform setup scripts.
 
 ## Example Output Folder
 
-The current default run writes to [output/runtime_joy](output/runtime_joy).
+The current default run writes to a word-specific folder such as [output/joy](output/joy).
 
 That folder contains:
 
@@ -124,7 +135,7 @@ input:
   text: joy
 
 outputs:
-  directory: ../output/runtime_joy
+  directory: ../output
   final_filename: working.png
   sequence:
     enabled: true
@@ -160,14 +171,44 @@ C:/Users/aaron/AppData/Local/Programs/Python/Python312/python.exe generate_navig
 That writes browsable markdown pages directly into [output](output), including:
 
 - [output/README.md](output/README.md) for the gallery home page
-- one [README.md](output/runtime_joy/README.md) inside each generated output folder
+- one [README.md](output/joy/README.md) inside each generated output folder
 
 ## Example Gallery
 
 Once generated, the gallery can be browsed starting from [output/README.md](output/README.md).
 
+## Viewing The 3D Version
+
+The current first-pass 3D viewer reads the exported [scene_3d.json](output/joy/scene_3d.json) file and builds a lit `PyVista` scene from the layered discs.
+
+Run it directly:
+
+```powershell
+python preview_3d.py --word joy
+```
+
+Or use the helper launcher:
+
+```powershell
+start_3d.bat
+```
+
+The viewer will:
+
+1. load `output/<word>/scene_3d.json`
+2. build thin cylinders for each disc
+3. place them in depth using the exported `z` positions
+4. open an interactive 3D window
+5. save a snapshot as `output/<word>/preview_3d.png`
+
+If you want an off-screen snapshot only:
+
+```powershell
+python preview_3d.py --word joy --no-show
+```
+
 ## Notes
 
 - The current supported alphabet is the one defined in [configuration/alphabets.yaml](configuration/alphabets.yaml). Unsupported letters fail fast during config validation.
 - The old prototype remains in [old/working.py](old/working.py) as a reference implementation.
-- The current generated sample in the repo is based on the word `joy`.
+- The current generated sample in the repo is based on the word `joy`, which now writes into `output/joy` by default.
