@@ -1,0 +1,178 @@
+source_path: C:\gh\oomlout_design_geometry_circle_overlap_generation\configuration\runtime.yaml
+input_text: joy
+encoding:
+  braille:
+    a:
+    - - true
+      - false
+    - - false
+      - false
+    - - false
+      - false
+    c:
+    - - true
+      - true
+    - - false
+      - false
+    - - false
+      - false
+    e:
+    - - true
+      - false
+    - - false
+      - true
+    - - false
+      - false
+    j:
+    - - false
+      - true
+    - - true
+      - true
+    - - false
+      - false
+    l:
+    - - true
+      - false
+    - - true
+      - false
+    - - true
+      - false
+    n:
+    - - true
+      - true
+    - - false
+      - true
+    - - true
+      - false
+    o:
+    - - true
+      - false
+    - - false
+      - true
+    - - true
+      - false
+    r:
+    - - true
+      - false
+    - - true
+      - true
+    - - true
+      - false
+    w:
+    - - false
+      - true
+    - - true
+      - true
+    - - false
+      - true
+    y:
+    - - true
+      - true
+    - - false
+      - true
+    - - true
+      - true
+  morse:
+    a:
+    - dot
+    - dash
+    c:
+    - dash
+    - dot
+    - dash
+    - dot
+    e:
+    - dot
+    j:
+    - dot
+    - dash
+    - dash
+    - dash
+    l:
+    - dot
+    - dash
+    - dot
+    - dot
+    n:
+    - dash
+    - dot
+    o:
+    - dash
+    - dash
+    - dash
+    r:
+    - dot
+    - dash
+    - dot
+    w:
+    - dot
+    - dash
+    - dash
+    y:
+    - dash
+    - dot
+    - dash
+    - dash
+geometry:
+  grid_width: 2
+  grid_height: 3
+  diameter: 52.0
+  spacing: 100
+  spacing_letter: 240
+  start_shift_x: 500
+  start_shift_y: 500
+  initial_dash_multiplier: 1.6
+  next_dot_multiplier: 2.0
+  next_dash_multiplier: 2.0
+canvas:
+  width: 1400
+  height: 1000
+  border_width: 2
+  background:
+  - 255
+  - 255
+  - 255
+palette_name: rainbow_dark
+palette:
+- - 153
+  - 27
+  - 27
+- - 179
+  - 74
+  - 21
+- - 191
+  - 111
+  - 36
+- - 169
+  - 134
+  - 54
+- - 112
+  - 128
+  - 40
+- - 69
+  - 120
+  - 98
+- - 58
+  - 99
+  - 129
+- - 72
+  - 61
+  - 139
+- - 92
+  - 52
+  - 102
+- - 119
+  - 33
+  - 111
+outputs:
+  directory: C:\gh\oomlout_design_geometry_circle_overlap_generation\output\runtime_joy
+  final_filename: working.png
+  save_metadata: true
+  sequence_enabled: true
+  sequence_prefix: working_
+  levels_enabled: true
+  animation_enabled: true
+  animation_filename: working.gif
+  animation_duration_ms: 250
+render:
+  draw_circle_outlines: true
