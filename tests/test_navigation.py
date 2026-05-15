@@ -30,11 +30,10 @@ def test_write_navigation_creates_index_and_detail_pages(tmp_path: Path) -> None
     with (run_dir / "circles.yaml").open("w", encoding="utf-8") as file:
         yaml.safe_dump([{"x": 1, "y": 1, "radius": 2}], file, sort_keys=False)
 
-    navigation_root = tmp_path / "navigation"
-    written_files = write_navigation(output_root=output_root, navigation_root=navigation_root)
+    written_files = write_navigation(output_root=output_root)
 
-    index_path = navigation_root / "index.md"
-    detail_path = navigation_root / "demo-run.md"
+    index_path = output_root / "README.md"
+    detail_path = run_dir / "README.md"
 
     assert index_path in written_files
     assert detail_path in written_files

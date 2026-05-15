@@ -6,7 +6,7 @@ from config import EncodingConfig, GeometryConfig
 Circle = tuple[float, float, float]
 
 
-def generate_text_circles(input_text: str, encoding: EncodingConfig, geometry: GeometryConfig) -> list[Circle]:
+def _generate_raw_text_circles(input_text: str, encoding: EncodingConfig, geometry: GeometryConfig) -> list[Circle]:
     circles: list[Circle] = []
     current_x = geometry.start_shift_x
     current_y = geometry.start_shift_y
@@ -44,3 +44,36 @@ def generate_text_circles(input_text: str, encoding: EncodingConfig, geometry: G
         current_x += geometry.spacing_letter
 
     return circles
+
+
+def _center_circles(circles: list[Circle], canvas_width: int, canvas_height: int) -> list[Circle]:
+    if not circles:
+        return []
+
+    min_x = min(center_x - radius for center_x, _, radius in circles)
+    max_x = max(center_x + radius for center_x, _, radius in circles)
+    min_y = min(center_y - radius for _, center_y, radius in circles)
+    max_y = max(center_y + radius for _, center_y, radius in circles)
+
+    shift_x = (canvas_width / 2) - ((min_x + max_x) / 2)
+    shift_y = (canvas_height / 2) - ((min_y + max_y) / 2)
+
+    return [
+        (center_x + shift_x, center_y + shift_y, radius)
+        for center_x, center_y, radius in circles
+    ]
+
+
+def generate_text_circles(
+    input_text: str,
+    encoding: EncodingConfig,
+    geometry: GeometryConfig,
+    canvas_width: int,
+    canvas_height: int,
+) -> list[Circle]:
+    circles = _generate_raw_text_circles(
+        input_text=input_text,
+        encoding=encoding,
+        geometry=geometry,
+    )
+    return _center_circles(circles, canvas_width=canvas_width, canvas_height=canvas_height)

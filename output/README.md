@@ -8,6 +8,6 @@ This navigation is generated automatically from the folders inside `output/`.
 
 <table width="100%">
 <tr>
-<td width="48%" valign="top"><img src="../output/runtime_joy/working.gif" alt="runtime_joy preview" width="100%"><br><br><strong><a href="runtime-joy.md">runtime_joy</a></strong><br>joy<br>Frames: 41 | Levels: 10</td>
+<td width="48%" valign="top"><img src="./runtime_joy/working.gif" alt="runtime_joy preview" width="100%"><br><br><strong><a href="./runtime_joy/README.md">runtime_joy</a></strong><br>aaron<br>Frames: 41 | Levels: 5</td>
 </tr>
 </table>

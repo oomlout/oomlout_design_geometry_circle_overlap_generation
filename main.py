@@ -63,6 +63,8 @@ def run_from_config(
         input_text=config.input_text,
         encoding=config.encoding,
         geometry=config.geometry,
+        canvas_width=config.canvas.width,
+        canvas_height=config.canvas.height,
     )
 
     final_output = config.outputs.directory / config.outputs.final_filename

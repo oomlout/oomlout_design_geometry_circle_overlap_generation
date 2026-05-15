@@ -6,58 +6,54 @@ from generator import generate_text_circles
 
 ROOT = Path(__file__).resolve().parents[1]
 
-EXPECTED_JOY_CIRCLES = [
-    (500, 600, 26.0),
-    (500, 600, 52.0),
-    (500, 600, 104.0),
-    (500, 600, 208.0),
-    (600, 500, 26.0),
-    (600, 500, 52.0),
-    (600, 500, 104.0),
-    (600, 500, 208.0),
-    (600, 600, 26.0),
-    (600, 600, 52.0),
-    (600, 600, 104.0),
-    (600, 600, 208.0),
-    (740, 500, 41.6),
-    (740, 500, 83.2),
-    (740, 500, 166.4),
-    (740, 700, 41.6),
-    (740, 700, 83.2),
-    (740, 700, 166.4),
-    (840, 600, 41.6),
-    (840, 600, 83.2),
-    (840, 600, 166.4),
-    (980, 500, 41.6),
-    (980, 500, 52.0),
-    (980, 500, 104.0),
-    (980, 500, 208.0),
-    (980, 700, 41.6),
-    (980, 700, 52.0),
-    (980, 700, 104.0),
-    (980, 700, 208.0),
-    (1080, 500, 41.6),
-    (1080, 500, 52.0),
-    (1080, 500, 104.0),
-    (1080, 500, 208.0),
-    (1080, 600, 41.6),
-    (1080, 600, 52.0),
-    (1080, 600, 104.0),
-    (1080, 600, 208.0),
-    (1080, 700, 41.6),
-    (1080, 700, 52.0),
-    (1080, 700, 104.0),
-    (1080, 700, 208.0),
-]
+def _bounds(circles: list[tuple[float, float, float]]) -> tuple[float, float, float, float]:
+    return (
+        min(center_x - radius for center_x, _, radius in circles),
+        max(center_x + radius for center_x, _, radius in circles),
+        min(center_y - radius for _, center_y, radius in circles),
+        max(center_y + radius for _, center_y, radius in circles),
+    )
 
 
-def test_generate_text_circles_matches_old_joy_baseline() -> None:
+def test_generate_text_circles_centers_joy_on_canvas() -> None:
     config = load_app_config(ROOT / "configuration" / "runtime.yaml")
 
     circles = generate_text_circles(
         input_text=config.input_text,
         encoding=config.encoding,
         geometry=config.geometry,
+        canvas_width=config.canvas.width,
+        canvas_height=config.canvas.height,
     )
 
-    assert circles == EXPECTED_JOY_CIRCLES
+    min_x, max_x, min_y, max_y = _bounds(circles)
+
+    assert len(circles) == 41
+    assert ((min_x + max_x) / 2) == config.canvas.width / 2
+    assert ((min_y + max_y) / 2) == config.canvas.height / 2
+
+
+def test_generate_text_circles_repositions_longer_words_to_stay_centered() -> None:
+    config = load_app_config(ROOT / "configuration" / "runtime.yaml")
+
+    short_circles = generate_text_circles(
+        input_text="a",
+        encoding=config.encoding,
+        geometry=config.geometry,
+        canvas_width=config.canvas.width,
+        canvas_height=config.canvas.height,
+    )
+    long_circles = generate_text_circles(
+        input_text="joy",
+        encoding=config.encoding,
+        geometry=config.geometry,
+        canvas_width=config.canvas.width,
+        canvas_height=config.canvas.height,
+    )
+
+    short_min_x, short_max_x, _, _ = _bounds(short_circles)
+    long_min_x, long_max_x, _, _ = _bounds(long_circles)
+
+    assert short_min_x > long_min_x
+    assert ((short_min_x + short_max_x) / 2) == config.canvas.width / 2
+    assert ((long_min_x + long_max_x) / 2) == config.canvas.width / 2

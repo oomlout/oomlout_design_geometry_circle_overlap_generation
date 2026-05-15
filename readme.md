@@ -60,6 +60,18 @@ From the repository root:
 C:/Users/aaron/AppData/Local/Programs/Python/Python312/python.exe main.py
 ```
 
+Or use the included helper scripts:
+
+```powershell
+setup.bat
+start.bat
+```
+
+```bash
+./setup.sh
+./start.sh
+```
+
 You will be prompted like this:
 
 ```text
@@ -73,6 +85,20 @@ After you enter a supported word, the program will:
 3. render the progressive frame sequence
 4. build a GIF animation
 5. open the generated preview in your default browser
+
+The `start` scripts then run the navigation generator so the output gallery pages stay current.
+
+## Setup Scripts
+
+The repo includes simple cross-platform setup scripts.
+
+- [setup.bat](setup.bat) creates `.venv` on Windows and installs the dependencies from [requirements.txt](requirements.txt)
+- [setup.sh](setup.sh) does the same on macOS or Linux
+
+## Start Scripts
+
+- [start.bat](start.bat) launches the prompt-driven generator on Windows and then refreshes the output gallery
+- [start.sh](start.sh) does the same on macOS or Linux
 
 ## Example Output Folder
 
@@ -131,14 +157,14 @@ Run it like this:
 C:/Users/aaron/AppData/Local/Programs/Python/Python312/python.exe generate_navigation.py
 ```
 
-That writes browsable markdown pages into [navigation](navigation), including:
+That writes browsable markdown pages directly into [output](output), including:
 
-- [navigation/index.md](navigation/index.md) for the gallery home page
-- one detail page per generated output folder
+- [output/README.md](output/README.md) for the gallery home page
+- one [README.md](output/runtime_joy/README.md) inside each generated output folder
 
 ## Example Gallery
 
-Once generated, the gallery can be browsed starting from [navigation/index.md](navigation/index.md).
+Once generated, the gallery can be browsed starting from [output/README.md](output/README.md).
 
 ## Notes
 

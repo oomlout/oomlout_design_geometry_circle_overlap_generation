@@ -9,7 +9,6 @@ import yaml
 
 ROOT = Path(__file__).resolve().parent
 OUTPUT_ROOT = ROOT / "output"
-NAVIGATION_ROOT = ROOT / "navigation"
 
 
 @dataclass(frozen=True)
@@ -30,14 +29,6 @@ class GalleryItem:
 def slugify(value: str) -> str:
     slug = re.sub(r"[^a-z0-9]+", "-", value.lower()).strip("-")
     return slug or "gallery-item"
-
-
-def relative_markdown_path(path: Path, start: Path) -> str:
-    return path.relative_to(start).as_posix()
-
-
-def relative_asset_path(target: Path, page_path: Path) -> str:
-    return Path("..") / target.relative_to(page_path.parent.parent)
 
 
 def read_effective_config(metadata_path: Path | None) -> dict:
@@ -97,14 +88,14 @@ def render_index(items: list[GalleryItem]) -> str:
         preview = item.animation or item.final_image
         preview_markup = ""
         if preview is not None:
-            preview_markup = f'<img src="../output/{item.name}/{preview.name}" alt="{item.name} preview" width="100%">'
+            preview_markup = f'<img src="./{item.name}/{preview.name}" alt="{item.name} preview" width="100%">'
         subtitle = item.input_text or item.name
         cards.append(
             "\n".join(
                 [
                     '<table width="100%">',
                     "<tr>",
-                    f'<td width="48%" valign="top">{preview_markup}<br><br><strong><a href="{item.slug}.md">{item.name}</a></strong><br>{subtitle}<br>Frames: {item.frame_count} | Levels: {item.level_count}</td>',
+                    f'<td width="48%" valign="top">{preview_markup}<br><br><strong><a href="./{item.name}/README.md">{item.name}</a></strong><br>{subtitle}<br>Frames: {item.frame_count} | Levels: {item.level_count}</td>',
                     "</tr>",
                     "</table>",
                 ]
@@ -128,16 +119,16 @@ This navigation is generated automatically from the folders inside `output/`.
 def render_item_page(item: GalleryItem) -> str:
     preview_sections: list[str] = []
     if item.animation is not None:
-        preview_sections.append(f"![{item.name} animation](../output/{item.name}/{item.animation.name})")
+        preview_sections.append(f"![{item.name} animation](./{item.animation.name})")
     if item.final_image is not None:
-        preview_sections.append(f"![{item.name} final](../output/{item.name}/{item.final_image.name})")
+        preview_sections.append(f"![{item.name} final](./{item.final_image.name})")
 
     levels_markup = ""
     if item.level_dir is not None:
         level_paths = sorted(item.level_dir.glob("level_*.png"))[:6]
         if level_paths:
             level_images = "\n".join(
-                f'![{level_path.stem}](../output/{item.name}/{item.level_dir.name}/{level_path.name})'
+                f'![{level_path.stem}](./{item.level_dir.name}/{level_path.name})'
                 for level_path in level_paths
             )
             levels_markup = f"""
@@ -148,19 +139,19 @@ def render_item_page(item: GalleryItem) -> str:
 
     file_links: list[str] = []
     if item.metadata is not None:
-        file_links.append(f"- [effective_config.yaml](../output/{item.name}/{item.metadata.name})")
+        file_links.append(f"- [effective_config.yaml](./{item.metadata.name})")
     if item.circles is not None:
-        file_links.append(f"- [circles.yaml](../output/{item.name}/{item.circles.name})")
+        file_links.append(f"- [circles.yaml](./{item.circles.name})")
     if item.final_image is not None:
-        file_links.append(f"- [final image](../output/{item.name}/{item.final_image.name})")
+        file_links.append(f"- [final image](./{item.final_image.name})")
     if item.animation is not None:
-        file_links.append(f"- [animation](../output/{item.name}/{item.animation.name})")
+        file_links.append(f"- [animation](./{item.animation.name})")
 
     files_markup = "\n".join(file_links) if file_links else "- No files detected"
 
     return f"""# {item.name}
 
-[Back to gallery](index.md)
+[Back to output gallery](../README.md)
 
 ## Summary
 
@@ -179,17 +170,17 @@ def render_item_page(item: GalleryItem) -> str:
 """
 
 
-def write_navigation(output_root: Path = OUTPUT_ROOT, navigation_root: Path = NAVIGATION_ROOT) -> list[Path]:
-    navigation_root.mkdir(parents=True, exist_ok=True)
+def write_navigation(output_root: Path = OUTPUT_ROOT) -> list[Path]:
+    output_root.mkdir(parents=True, exist_ok=True)
     items = collect_gallery_items(output_root)
 
     written_files: list[Path] = []
-    index_path = navigation_root / "index.md"
+    index_path = output_root / "README.md"
     index_path.write_text(render_index(items), encoding="utf-8")
     written_files.append(index_path)
 
     for item in items:
-        page_path = navigation_root / f"{item.slug}.md"
+        page_path = item.folder / "README.md"
         page_path.write_text(render_item_page(item), encoding="utf-8")
         written_files.append(page_path)
 
